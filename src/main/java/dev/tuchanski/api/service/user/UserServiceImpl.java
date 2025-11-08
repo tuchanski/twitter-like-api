@@ -9,11 +9,12 @@ import dev.tuchanski.api.exceptions.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
