@@ -9,6 +9,7 @@ import dev.tuchanski.api.exceptions.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
@@ -33,6 +35,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toEntity(userRequestDTO);
+
+        user.setPassword(bCryptPasswordEncoder.encode(userRequestDTO.password()));
+
         user = userRepository.save(user);
         return userMapper.toDTO(user);
     }
@@ -64,6 +69,10 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO update(UUID id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
 
+        if (userUpdateDTO.name() != null) {
+            user.setUsername(userUpdateDTO.name());
+        }
+
         if (userUpdateDTO.email() != null) {
             if (userRepository.existsByEmail(userUpdateDTO.email())) {
                 throw new UserAlreadyRegisteredException("User with " + userUpdateDTO.email() + " already registered");
@@ -79,8 +88,11 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userUpdateDTO.password() != null) {
-            // Fazer hash da senha dps
-            user.setPassword(userUpdateDTO.password());
+            user.setPassword(bCryptPasswordEncoder.encode(userUpdateDTO.password()));
+        }
+
+        if (userUpdateDTO.bio() != null) {
+            user.setBio(userUpdateDTO.bio());
         }
 
         user = userRepository.save(user);

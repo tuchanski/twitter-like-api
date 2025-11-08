@@ -12,6 +12,7 @@ public class UserMapper {
     public User toEntity(UserRequestDTO dto) {
         User user = new User();
 
+        user.setName(dto.name());
         user.setUsername(dto.username());
         user.setEmail(dto.email());
         user.setPassword(dto.password());
@@ -22,6 +23,7 @@ public class UserMapper {
     public User toEntity(UserUpdateDTO dto) {
         User user = new User();
 
+        user.setName(dto.name());
         user.setUsername(dto.username());
         user.setEmail(dto.email());
         user.setPassword(dto.password());
@@ -32,6 +34,7 @@ public class UserMapper {
     public UserResponseDTO toDTO(User user) {
         UserResponseDTO dto = new UserResponseDTO(
                 user.getId(),
+                user.getName(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getBio(),
