@@ -4,12 +4,14 @@ import dev.tuchanski.api.dto.user.UserRequestDTO;
 import dev.tuchanski.api.dto.user.UserResponseDTO;
 import dev.tuchanski.api.dto.user.UserUpdateDTO;
 import dev.tuchanski.api.entity.User;
+import dev.tuchanski.api.entity.enums.UserRole;
 import dev.tuchanski.api.exception.user.UserAlreadyRegisteredException;
 import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
@@ -35,9 +37,17 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toEntity(userRequestDTO);
+        user.setPassword(passwordEncoder.encode(userRequestDTO.password()));
 
-        user.setPassword(bCryptPasswordEncoder.encode(userRequestDTO.password()));
+        UserRole role;
 
+        if (userRepository.findAll().isEmpty()) {
+            role = UserRole.ADMIN; // First user is Admin :)
+        } else {
+            role = UserRole.USER;
+        }
+
+        user.setRole(role);
         user = userRepository.save(user);
         return userMapper.toDTO(user);
     }
@@ -88,7 +98,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userUpdateDTO.password() != null) {
-            user.setPassword(bCryptPasswordEncoder.encode(userUpdateDTO.password()));
+            user.setPassword(passwordEncoder.encode(userUpdateDTO.password()));
         }
 
         if (userUpdateDTO.bio() != null) {
