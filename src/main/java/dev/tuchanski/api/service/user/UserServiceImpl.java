@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO findByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = (User) userRepository.findByUsername(username);
 
         if (user == null) {
             throw new UserNotFoundException("User with username " + username + " not found");
