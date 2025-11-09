@@ -30,14 +30,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> findById(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findById(id));
-    }
-
     @GetMapping("/username/{username}")
     public ResponseEntity<UserResponseDTO> findByUsername(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findByUsername(username));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findById(id));
     }
 
     @PatchMapping("/{id}")

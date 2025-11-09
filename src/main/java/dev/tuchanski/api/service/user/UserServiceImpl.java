@@ -4,8 +4,8 @@ import dev.tuchanski.api.dto.user.UserRequestDTO;
 import dev.tuchanski.api.dto.user.UserResponseDTO;
 import dev.tuchanski.api.dto.user.UserUpdateDTO;
 import dev.tuchanski.api.entity.User;
-import dev.tuchanski.api.exceptions.user.UserAlreadyRegisteredException;
-import dev.tuchanski.api.exceptions.user.UserNotFoundException;
+import dev.tuchanski.api.exception.user.UserAlreadyRegisteredException;
+import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new UserNotFoundException("User with name " + username + " not found");
+            throw new UserNotFoundException("User with username " + username + " not found");
         }
 
         return userMapper.toDTO(user);
