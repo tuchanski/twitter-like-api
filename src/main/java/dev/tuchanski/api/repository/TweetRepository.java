@@ -1,11 +1,14 @@
 package dev.tuchanski.api.repository;
 
 import dev.tuchanski.api.entity.Tweet;
+import dev.tuchanski.api.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface TweetRepository extends JpaRepository<Tweet, UUID> {
+    List<Tweet> findAllByUser(User user);
 }
