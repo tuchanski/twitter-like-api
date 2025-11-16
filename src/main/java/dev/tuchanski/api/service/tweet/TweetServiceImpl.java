@@ -4,6 +4,11 @@ import dev.tuchanski.api.dto.tweet.TweetRequestDTO;
 import dev.tuchanski.api.dto.tweet.TweetResponseDTO;
 import dev.tuchanski.api.entity.Tweet;
 import dev.tuchanski.api.entity.User;
+import dev.tuchanski.api.exception.auth.InvalidTokenException;
+import dev.tuchanski.api.exception.tweet.ContentIsTheSameException;
+import dev.tuchanski.api.exception.tweet.TweetNotBelongToUserException;
+import dev.tuchanski.api.exception.tweet.TweetNotFoundException;
+import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.TweetMapper;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.TweetRepository;
@@ -45,7 +50,7 @@ public class TweetServiceImpl implements TweetService {
         User user = (User) userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         return tweetRepository.findAllByUser(user).stream().map(tweetMapper::toDTO).toList();
@@ -63,11 +68,11 @@ public class TweetServiceImpl implements TweetService {
         Tweet tweet = tweetRepository.findById(id).orElseThrow(() -> new RuntimeException("Tweet not found"));
 
         if (!tweet.getUser().getUsername().equals(user.getUsername())) {
-            throw new RuntimeException("User does not belong to this tweet");
+            throw new TweetNotBelongToUserException("User does not belong to this tweet");
         }
 
         if (tweet.getContent().equals(tweetRequestDTO.content())) {
-            throw new RuntimeException("Tweet content cannot be the same as tweet content");
+            throw new ContentIsTheSameException("Tweet content cannot be the same as tweet content");
         }
 
         tweet.setContent(tweetRequestDTO.content());
@@ -79,10 +84,10 @@ public class TweetServiceImpl implements TweetService {
     @Override
     public void delete(String token, UUID id) {
         User user = getUserFromToken(token);
-        Tweet tweet = tweetRepository.findById(id).orElseThrow(() -> new RuntimeException("Tweet not found"));
+        Tweet tweet = tweetRepository.findById(id).orElseThrow(() -> new TweetNotFoundException("Tweet not found"));
 
         if (!tweet.getUser().getUsername().equals(user.getUsername())) {
-            throw new RuntimeException("User does not belong to this tweet");
+            throw new TweetNotBelongToUserException("User does not belong to this tweet");
         }
 
         tweetRepository.delete(tweet);
@@ -92,13 +97,13 @@ public class TweetServiceImpl implements TweetService {
     private User getUserFromToken(String token) {
         String username = tokenService.validateToken(token);
         if (username == null || username.isEmpty()) {
-            throw new RuntimeException("Invalid token");
+            throw new InvalidTokenException("Invalid token");
         }
 
         User user = (User) userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         return user;
