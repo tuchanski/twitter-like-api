@@ -6,7 +6,8 @@ import java.util.UUID;
 public record TweetResponseDTO(
         UUID id,
         String content,
-        Date createdAT,
-        UUID userId
+        Date createdAt,
+        Date updatedAt,
+        String username
 ){
 }

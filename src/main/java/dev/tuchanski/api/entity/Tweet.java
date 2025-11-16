@@ -3,6 +3,7 @@ package dev.tuchanski.api.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 import java.util.Date;
@@ -25,6 +26,11 @@ public class Tweet {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false, name = "created_at")
     private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
