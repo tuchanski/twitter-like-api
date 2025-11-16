@@ -15,14 +15,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    private ResponseEntity<RestErrorMessage> userNotFoundHandler(UserNotFoundException e) {
-        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.NOT_FOUND, e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(treatedResponse);
+    // AUTH
+
+    @ExceptionHandler(InvalidTokenException.class)
+    private ResponseEntity<RestErrorMessage> invalidTokenExceptionHandler(InvalidTokenException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.UNAUTHORIZED, e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(treatedResponse);
     }
 
-    @ExceptionHandler(TweetNotFoundException.class)
-    private ResponseEntity<RestErrorMessage> tweetNotFoundExceptionHandler(TweetNotFoundException e) {
+    // USER
+
+    @ExceptionHandler(UserNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> userNotFoundHandler(UserNotFoundException e) {
         RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.NOT_FOUND, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(treatedResponse);
     }
@@ -33,10 +37,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
     }
 
-    @ExceptionHandler(InvalidTokenException.class)
-    private ResponseEntity<RestErrorMessage> invalidTokenExceptionHandler(InvalidTokenException e) {
-        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.UNAUTHORIZED, e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(treatedResponse);
+    // TWEET
+
+    @ExceptionHandler(TweetNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> tweetNotFoundExceptionHandler(TweetNotFoundException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.NOT_FOUND, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(treatedResponse);
     }
 
     @ExceptionHandler(TweetNotBelongToUserException.class)
