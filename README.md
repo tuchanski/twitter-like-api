@@ -1,4 +1,4 @@
-# Twitter-like API (Spring Boot)
+# Twitter-like API 𝕏
 
 A learning-oriented REST API inspired by Twitter/X. It focuses on core social features (users and tweets) built with modern Spring Boot, JWT-based authentication, and MySQL persistence.
 
