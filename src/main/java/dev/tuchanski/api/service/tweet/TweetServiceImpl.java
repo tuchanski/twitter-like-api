@@ -58,14 +58,14 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public TweetResponseDTO findById(UUID id) {
-        return tweetMapper.toDTO(tweetRepository.findById(id).orElseThrow(() -> new RuntimeException("Tweet not found")));
+        return tweetMapper.toDTO(tweetRepository.findById(id).orElseThrow(() -> new TweetNotFoundException("Tweet not found")));
     }
 
     @Override
     public TweetResponseDTO update(String token, UUID id, TweetRequestDTO tweetRequestDTO) {
         User user = getUserFromToken(token);
 
-        Tweet tweet = tweetRepository.findById(id).orElseThrow(() -> new RuntimeException("Tweet not found"));
+        Tweet tweet = tweetRepository.findById(id).orElseThrow(() -> new TweetNotFoundException("Tweet not found"));
 
         if (!tweet.getUser().getUsername().equals(user.getUsername())) {
             throw new TweetNotBelongToUserException("User does not belong to this tweet");
