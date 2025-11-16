@@ -5,10 +5,12 @@ import dev.tuchanski.api.dto.user.UserResponseDTO;
 import dev.tuchanski.api.dto.user.UserUpdateDTO;
 import dev.tuchanski.api.entity.User;
 import dev.tuchanski.api.entity.enums.UserRole;
+import dev.tuchanski.api.exception.auth.InvalidTokenException;
 import dev.tuchanski.api.exception.user.UserAlreadyRegisteredException;
 import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.UserRepository;
+import dev.tuchanski.api.service.auth.TokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     @Override
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
@@ -119,5 +122,24 @@ public class UserServiceImpl implements UserService {
 
         userRepository.deleteById(id);
 
+    }
+
+    private User getUserFromToken(String token) {
+        return getUser(token, tokenService, userRepository);
+    }
+
+    public static User getUser(String token, TokenService tokenService, UserRepository userRepository) {
+        String username = tokenService.validateToken(token);
+        if (username == null || username.isEmpty()) {
+            throw new InvalidTokenException("Invalid token");
+        }
+
+        User user = (User) userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        return user;
     }
 }

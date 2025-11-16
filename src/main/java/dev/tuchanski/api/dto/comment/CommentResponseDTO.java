@@ -7,7 +7,7 @@ public record CommentResponseDTO(
         UUID id,
         String content,
         Date createdAt,
-        UUID userId,
+        Date updatedAt,
         String username
 ) {
 }

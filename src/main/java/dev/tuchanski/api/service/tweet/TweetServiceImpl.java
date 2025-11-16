@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static dev.tuchanski.api.service.user.UserServiceImpl.getUser;
+
 @Service
 @AllArgsConstructor
 public class TweetServiceImpl implements TweetService {
@@ -95,18 +97,7 @@ public class TweetServiceImpl implements TweetService {
 
 
     private User getUserFromToken(String token) {
-        String username = tokenService.validateToken(token);
-        if (username == null || username.isEmpty()) {
-            throw new InvalidTokenException("Invalid token");
-        }
-
-        User user = (User) userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UserNotFoundException("User not found");
-        }
-
-        return user;
+        return getUser(token, tokenService, userRepository);
     }
 }
 
