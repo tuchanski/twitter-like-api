@@ -8,6 +8,7 @@ public record CommentResponseDTO(
         String content,
         Date createdAt,
         Date updatedAt,
-        String username
+        String username,
+        UUID tweetId
 ) {
 }

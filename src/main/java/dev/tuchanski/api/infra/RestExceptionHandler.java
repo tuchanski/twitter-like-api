@@ -1,6 +1,8 @@
 package dev.tuchanski.api.infra;
 
 import dev.tuchanski.api.exception.auth.InvalidTokenException;
+import dev.tuchanski.api.exception.comment.CommentNotBelongToUserException;
+import dev.tuchanski.api.exception.comment.CommentNotFoundException;
 import dev.tuchanski.api.exception.tweet.ContentIsTheSameException;
 import dev.tuchanski.api.exception.tweet.TweetNotBelongToUserException;
 import dev.tuchanski.api.exception.tweet.TweetNotFoundException;
@@ -8,6 +10,7 @@ import dev.tuchanski.api.exception.user.UserAlreadyRegisteredException;
 import dev.tuchanski.api.exception.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -21,6 +24,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<RestErrorMessage> invalidTokenExceptionHandler(InvalidTokenException e) {
         RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.UNAUTHORIZED, e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(treatedResponse);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> usernameNotFoundExceptionHandler(UsernameNotFoundException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.NOT_FOUND, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(treatedResponse);
     }
 
     // USER
@@ -53,6 +62,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ContentIsTheSameException.class)
     private ResponseEntity<RestErrorMessage> contentIsTheSameExceptionHandler(ContentIsTheSameException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    // COMMENT
+
+    @ExceptionHandler(CommentNotBelongToUserException.class)
+    private ResponseEntity<RestErrorMessage> commentNotBelongToUserException(CommentNotBelongToUserException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> commentNotFoundExceptionHandler(CommentNotFoundException e) {
         RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
     }

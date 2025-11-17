@@ -5,9 +5,10 @@ import dev.tuchanski.api.dto.comment.CommentResponseDTO;
 import dev.tuchanski.api.entity.Comment;
 import dev.tuchanski.api.entity.Tweet;
 import dev.tuchanski.api.entity.User;
-import dev.tuchanski.api.exception.auth.InvalidTokenException;
+import dev.tuchanski.api.exception.comment.CommentNotBelongToUserException;
+import dev.tuchanski.api.exception.comment.CommentNotFoundException;
+import dev.tuchanski.api.exception.tweet.ContentIsTheSameException;
 import dev.tuchanski.api.exception.tweet.TweetNotFoundException;
-import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.CommentMapper;
 import dev.tuchanski.api.repository.CommentRepository;
 import dev.tuchanski.api.repository.TweetRepository;
@@ -50,22 +51,53 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponseDTO findById(UUID id) {
-        return null;
+        return commentMapper.toDTO(commentRepository.findById(id).orElseThrow(
+                () -> new CommentNotFoundException("Comment with id: " + id + " not found")
+        ));
     }
 
     @Override
     public List<CommentResponseDTO> findByTweetIdOrderByCreatedAtDesc(UUID tweetId) {
-        return List.of();
+        if (tweetRepository.findById(tweetId).isEmpty()) {
+            throw new TweetNotFoundException("Tweet with id: " + tweetId + " not found");
+        }
+
+        return commentRepository.findByTweetIdOrderByCreatedAtDesc(tweetId).stream().map(commentMapper::toDTO).toList();
     }
 
     @Override
     public CommentResponseDTO update(String token, UUID id, CommentRequestDTO commentRequestDTO) {
-        return null;
+        User user = getUser(token, tokenService, userRepository);
+
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new CommentNotFoundException("Comment with id: " + id + " not found")
+        );
+
+        if (!comment.getUser().getUsername().equals(user.getUsername())) {
+            throw new CommentNotBelongToUserException("Comment with id: " + id + " not belong to this User");
+        }
+
+        if (comment.getContent().equals(commentRequestDTO.content())) {
+            throw new ContentIsTheSameException("Comment content is the same");
+        }
+
+        comment.setContent(commentRequestDTO.content());
+        comment = commentRepository.save(comment);
+        return commentMapper.toDTO(comment);
     }
 
     @Override
     public void delete(String token, UUID id) {
+        User user = getUser(token, tokenService, userRepository);
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new CommentNotFoundException("Comment with id: " + id + " not found")
+        );
 
+        if (!comment.getUser().getId().equals(user.getId())) {
+            throw new CommentNotBelongToUserException("Comment not belong to this User");
+        }
+
+        commentRepository.delete(comment);
     }
 
     private User getUserFromToken(String token) {
