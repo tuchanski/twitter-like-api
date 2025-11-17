@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/tweets").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/tweets/username/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/tweets/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
