@@ -14,7 +14,7 @@ import dev.tuchanski.api.repository.CommentRepository;
 import dev.tuchanski.api.repository.TweetRepository;
 import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.UUID;
 import static dev.tuchanski.api.service.user.UserServiceImpl.getUser;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final TokenService tokenService;

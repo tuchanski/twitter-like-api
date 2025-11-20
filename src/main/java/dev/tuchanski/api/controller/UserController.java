@@ -5,11 +5,10 @@ import dev.tuchanski.api.dto.user.UserResponseDTO;
 import dev.tuchanski.api.dto.user.UserUpdateDTO;
 import dev.tuchanski.api.service.user.UserService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.web.headers.HeadersSecurityMarker;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
