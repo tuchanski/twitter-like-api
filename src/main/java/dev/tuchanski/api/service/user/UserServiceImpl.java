@@ -7,6 +7,7 @@ import dev.tuchanski.api.entity.User;
 import dev.tuchanski.api.entity.enums.UserRole;
 import dev.tuchanski.api.exception.auth.InvalidTokenException;
 import dev.tuchanski.api.exception.user.UserAlreadyRegisteredException;
+import dev.tuchanski.api.exception.user.UserIsNotAllowedException;
 import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.UserRepository;
@@ -111,6 +112,26 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
 
         return userMapper.toDTO(user);
+    }
+
+    @Override
+    public UserResponseDTO addAdmin(String token, String usernameTarget) {
+        User currentUser = getUserFromToken(token);
+
+        if (currentUser.getRole() != UserRole.ADMIN) {
+            throw new UserIsNotAllowedException("User is not allowed to add admin");
+        }
+
+        User targetUser = (User) userRepository.findByUsername(usernameTarget);
+
+        if (targetUser == null) {
+            throw new UserNotFoundException("User with username " + usernameTarget + " not found");
+        }
+
+        targetUser.setRole(UserRole.ADMIN);
+        targetUser = userRepository.save(targetUser);
+
+        return userMapper.toDTO(targetUser);
     }
 
     @Override

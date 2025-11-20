@@ -13,5 +13,6 @@ public interface UserService {
     UserResponseDTO findById(UUID id);
     UserResponseDTO findByUsername(String username);
     UserResponseDTO update(UUID id, UserUpdateDTO userUpdateDTO);
+    UserResponseDTO addAdmin(String token, String usernameTarget);
     void delete(UUID id);
 }
