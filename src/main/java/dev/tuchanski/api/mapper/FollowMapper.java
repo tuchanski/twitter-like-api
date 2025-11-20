@@ -9,7 +9,9 @@ public class FollowMapper {
 
     public FollowResponseDTO toDTO(Follow follow) {
         return new FollowResponseDTO(
-                follow.getId()
+                follow.getId(),
+                follow.getFollowed().getUsername(),
+                follow.getFollower().getUsername()
         );
     }
 
