@@ -14,6 +14,7 @@ import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ public class TweetServiceImpl implements TweetService {
     private final TweetMapper tweetMapper;
 
     @Override
+    @Transactional
     public TweetResponseDTO create(String token, TweetRequestDTO tweetRequestDTO) {
         User user = getUserFromToken(token);
         Tweet tweet = tweetMapper.toEntity(tweetRequestDTO);
@@ -40,11 +42,13 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TweetResponseDTO> findAll() {
         return tweetRepository.findAll().stream().map(tweetMapper::toDTO).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TweetResponseDTO> findAllByUsername(String username) {
         User user = (User) userRepository.findByUsername(username);
 
@@ -56,11 +60,13 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TweetResponseDTO findById(UUID id) {
         return tweetMapper.toDTO(tweetRepository.findById(id).orElseThrow(() -> new TweetNotFoundException("Tweet not found")));
     }
 
     @Override
+    @Transactional
     public TweetResponseDTO update(String token, UUID id, TweetRequestDTO tweetRequestDTO) {
         User user = getUserFromToken(token);
 
@@ -81,6 +87,7 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
+    @Transactional
     public void delete(String token, UUID id) {
         User user = getUserFromToken(token);
         Tweet tweet = tweetRepository.findById(id).orElseThrow(() -> new TweetNotFoundException("Tweet not found"));
