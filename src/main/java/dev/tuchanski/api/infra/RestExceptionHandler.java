@@ -3,6 +3,8 @@ package dev.tuchanski.api.infra;
 import dev.tuchanski.api.exception.auth.InvalidTokenException;
 import dev.tuchanski.api.exception.comment.CommentNotBelongToUserException;
 import dev.tuchanski.api.exception.comment.CommentNotFoundException;
+import dev.tuchanski.api.exception.like.LikeAlreadyRegisteredException;
+import dev.tuchanski.api.exception.like.LikeNotFoundException;
 import dev.tuchanski.api.exception.tweet.ContentIsTheSameException;
 import dev.tuchanski.api.exception.tweet.TweetNotBelongToUserException;
 import dev.tuchanski.api.exception.tweet.TweetNotFoundException;
@@ -76,6 +78,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CommentNotFoundException.class)
     private ResponseEntity<RestErrorMessage> commentNotFoundExceptionHandler(CommentNotFoundException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    // LIKE
+
+    @ExceptionHandler(LikeAlreadyRegisteredException.class)
+    private ResponseEntity<RestErrorMessage> likeAlreadyRegisteredExceptionHandler(LikeAlreadyRegisteredException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    @ExceptionHandler(LikeNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> likeNotFoundExceptionHandler(LikeNotFoundException e) {
         RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
     }
