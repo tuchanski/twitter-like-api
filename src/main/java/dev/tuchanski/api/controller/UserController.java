@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.web.headers.HeadersSecurityMarker;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,4 +59,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{targetUsername}/admin")
+    public ResponseEntity<UserResponseDTO> addAdmin(@PathVariable String targetUsername) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.addAdmin(targetUsername));
+    }
 }

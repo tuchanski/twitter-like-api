@@ -12,6 +12,7 @@ import dev.tuchanski.api.exception.tweet.ContentIsTheSameException;
 import dev.tuchanski.api.exception.tweet.TweetNotBelongToUserException;
 import dev.tuchanski.api.exception.tweet.TweetNotFoundException;
 import dev.tuchanski.api.exception.user.UserAlreadyRegisteredException;
+import dev.tuchanski.api.exception.user.UserIsNotAllowedException;
 import dev.tuchanski.api.exception.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<RestErrorMessage> userAlreadyRegisteredHandler(UserAlreadyRegisteredException e) {
         RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    @ExceptionHandler(UserIsNotAllowedException.class)
+    private ResponseEntity<RestErrorMessage> userIsNotAllowedHandler(UserIsNotAllowedException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.FORBIDDEN, e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(treatedResponse);
     }
 
     // TWEET
