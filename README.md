@@ -1,4 +1,4 @@
-# Twitter-like API (𝕏 Inspired)
+# Twitter-like API 🐦
 
 An educational, production-style REST API inspired by Twitter/X. It implements core social features (users, tweets, likes, comments, follows) using modern Spring Boot, stateless JWT authentication, and MySQL persistence.
 
