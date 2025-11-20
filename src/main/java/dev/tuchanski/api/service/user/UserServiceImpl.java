@@ -115,13 +115,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO addAdmin(String token, String usernameTarget) {
-        User currentUser = getUserFromToken(token);
-
-        if (currentUser.getRole() != UserRole.ADMIN) {
-            throw new UserIsNotAllowedException("User is not allowed to add admin");
-        }
-
+    public UserResponseDTO addAdmin(String usernameTarget) {
         User targetUser = (User) userRepository.findByUsername(usernameTarget);
 
         if (targetUser == null) {

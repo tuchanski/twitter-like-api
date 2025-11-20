@@ -59,9 +59,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{targetUsername}/admin")
-    public ResponseEntity<UserResponseDTO> addAdmin(@RequestHeader("Authorization") String token, @PathVariable String targetUsername) {
-        token = token.replace("Bearer ", "");
-        return ResponseEntity.status(HttpStatus.OK).body(userService.addAdmin(token, targetUsername));
+    public ResponseEntity<UserResponseDTO> addAdmin(@PathVariable String targetUsername) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.addAdmin(targetUsername));
     }
 }
