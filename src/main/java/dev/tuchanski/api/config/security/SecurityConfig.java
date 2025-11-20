@@ -42,6 +42,12 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/tweets/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/docs"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

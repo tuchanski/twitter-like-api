@@ -13,6 +13,7 @@ import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ public class FollowServiceImpl implements FollowService {
     private final FollowMapper followMapper;
 
     @Override
+    @Transactional
     public FollowResponseDTO createFollow(String token, String usernameFollowTarget) {
         User sessionUser = getUserFromToken(token);
 
@@ -57,6 +59,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FollowResponseDTO> getFollowing(String username) {
         User user = (User) userRepository.findByUsername(username);
 
@@ -68,6 +71,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FollowResponseDTO> getFollowers(String username) {
         User user = (User) userRepository.findByUsername(username);
 
@@ -79,6 +83,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
+    @Transactional
     public void delete(String token, String usernameUnfollowTarget) {
         User sessionUser = getUserFromToken(token);
         User unfollowTarget = (User) userRepository.findByUsername(usernameUnfollowTarget);

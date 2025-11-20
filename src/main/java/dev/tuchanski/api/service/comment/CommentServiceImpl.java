@@ -16,6 +16,7 @@ import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +34,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
+    @Transactional
     public CommentResponseDTO create(String token, UUID tweetId, CommentRequestDTO commentRequestDTO) {
 
         User user = getUser(token, tokenService, userRepository);
@@ -50,6 +52,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CommentResponseDTO findById(UUID id) {
         return commentMapper.toDTO(commentRepository.findById(id).orElseThrow(
                 () -> new CommentNotFoundException("Comment with id: " + id + " not found")
@@ -57,6 +60,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentResponseDTO> findByTweetIdOrderByCreatedAtDesc(UUID tweetId) {
         if (tweetRepository.findById(tweetId).isEmpty()) {
             throw new TweetNotFoundException("Tweet with id: " + tweetId + " not found");
@@ -66,6 +70,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentResponseDTO update(String token, UUID id, CommentRequestDTO commentRequestDTO) {
         User user = getUser(token, tokenService, userRepository);
 
@@ -87,6 +92,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void delete(String token, UUID id) {
         User user = getUser(token, tokenService, userRepository);
         Comment comment = commentRepository.findById(id).orElseThrow(

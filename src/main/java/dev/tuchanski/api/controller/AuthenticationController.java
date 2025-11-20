@@ -17,10 +17,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoints for user registration and login using JWT.")
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
@@ -28,6 +33,12 @@ public class AuthenticationController {
     private final TokenService tokenService;
 
     @PostMapping("/login")
+    @Operation(summary = "Authenticate user and obtain JWT token",
+            description = "Validates provided credentials and returns a JWT bearer token plus user id and username.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful authentication"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    })
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(loginRequestDTO.username(), loginRequestDTO.password());
         var auth = authenticationManager.authenticate(usernamePassword);
@@ -40,6 +51,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new user",
+            description = "Creates a new user account with the provided data.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "User created successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation error")
+    })
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRequestDTO registerRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(registerRequestDTO));
     }

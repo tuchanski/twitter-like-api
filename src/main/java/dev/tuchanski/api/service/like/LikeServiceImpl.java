@@ -15,6 +15,7 @@ import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +33,7 @@ public class LikeServiceImpl implements LikeService {
     private final LikeMapper likeMapper;
 
     @Override
+    @Transactional
     public LikeResponseDTO create(String token, UUID tweetId) {
         User user = getUserFromToken(token);
 
@@ -52,6 +54,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LikeResponseDTO findById(UUID id) {
         return likeMapper.toDTO(likeRepository.findById(id).orElseThrow(
                 () -> new LikeNotFoundException("Like not found")
@@ -59,6 +62,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LikeResponseDTO> findAllByTweet(UUID tweetId) {
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(
                 () -> new TweetNotFoundException("Tweet not found")
@@ -68,6 +72,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LikeResponseDTO> findAllByUser(String username) {
         User user = (User) userRepository.findByUsername(username);
 
@@ -79,6 +84,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
+    @Transactional
     public void deleteById(String token, UUID tweetId) {
         User user = getUserFromToken(token);
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(
