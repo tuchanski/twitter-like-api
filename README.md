@@ -2,24 +2,6 @@
 
 An educational, production-style REST API inspired by Twitter/X. It implements core social features (users, tweets, likes, comments, follows) using modern Spring Boot, stateless JWT authentication, and MySQL persistence.
 
-## Table of Contents
-
-1. Overview
-2. Features
-3. Tech Stack
-4. Architecture
-5. Configuration
-6. Running the Project
-7. Authentication & Security
-8. API Endpoints
-9. Example Usage
-10. OpenAPI / Swagger Docs
-11. Data Model (Simplified)
-12. Testing (Planned)
-13. Roadmap
-14. Contributing
-15. License & Disclaimer
-
 ## 1. Overview
 
 This project serves as a learning platform showcasing clean layering, DTO mapping, role-based + ownership security, and comprehensive OpenAPI documentation suitable for extension into a full social feed system.
