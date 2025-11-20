@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static dev.tuchanski.api.service.user.UserServiceImpl.getUser;
 
@@ -37,11 +36,11 @@ public class LikeServiceImpl implements LikeService {
         User user = getUserFromToken(token);
 
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(
-                () -> new TweetNotFoundException("Tweet with id: " + tweetId + " not found")
+                () -> new TweetNotFoundException("Tweet not found")
         );
 
         if (likeRepository.existsByUserAndTweet(user, tweet)) {
-            throw new LikeAlreadyRegisteredException("Tweet with id: " + tweetId + " is already liked by this user");
+            throw new LikeAlreadyRegisteredException("Tweet is already liked by this user");
         }
 
         Like like = new Like();
@@ -55,24 +54,26 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public LikeResponseDTO findById(UUID id) {
         return likeMapper.toDTO(likeRepository.findById(id).orElseThrow(
-                () -> new LikeNotFoundException("Like with id: " + id + " not found")
+                () -> new LikeNotFoundException("Like not found")
         ));
     }
 
     @Override
     public List<LikeResponseDTO> findAllByTweet(UUID tweetId) {
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(
-                () -> new TweetNotFoundException("Tweet with id: " + tweetId + " not found")
+                () -> new TweetNotFoundException("Tweet not found")
         );
 
         return likeRepository.findAllByTweet(tweet).stream().map(likeMapper::toDTO).toList();
     }
 
     @Override
-    public List<LikeResponseDTO> findAllByUser(UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("User with id: " + userId + " not found")
-        );
+    public List<LikeResponseDTO> findAllByUser(String username) {
+        User user = (User) userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new UserNotFoundException("User with name: " + username + " not found");
+        }
 
         return likeRepository.findAllByUser(user).stream().map(likeMapper::toDTO).toList();
     }
@@ -81,7 +82,7 @@ public class LikeServiceImpl implements LikeService {
     public void deleteById(String token, UUID tweetId) {
         User user = getUserFromToken(token);
         Tweet tweet = tweetRepository.findById(tweetId).orElseThrow(
-                () -> new TweetNotFoundException("Tweet with id: " + tweetId + " not found")
+                () -> new TweetNotFoundException("Tweet not found")
         );
 
         Like like = likeRepository.findByUserAndTweet(user, tweet);
