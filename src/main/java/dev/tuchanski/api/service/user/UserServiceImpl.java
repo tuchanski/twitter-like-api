@@ -14,6 +14,7 @@ import dev.tuchanski.api.service.auth.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final TokenService tokenService;
 
     @Override
+    @Transactional
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
 
         if (userRepository.existsByEmail(userRequestDTO.email())) {
@@ -55,6 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponseDTO> findAll() {
         return userRepository.findAll().stream().map(
                 userMapper::toDTO
@@ -62,11 +65,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponseDTO findById(UUID id) {
         return userMapper.toDTO(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found")));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponseDTO findByUsername(String username) {
         User user = (User) userRepository.findByUsername(username);
 
@@ -78,6 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponseDTO update(UUID id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
 
@@ -113,6 +119,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponseDTO addAdmin(String usernameTarget) {
         User targetUser = (User) userRepository.findByUsername(usernameTarget);
 
@@ -127,6 +134,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
 
         if (!userRepository.existsById(id)) {
