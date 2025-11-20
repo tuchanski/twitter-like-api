@@ -7,13 +7,11 @@ import dev.tuchanski.api.entity.User;
 import dev.tuchanski.api.entity.enums.UserRole;
 import dev.tuchanski.api.exception.auth.InvalidTokenException;
 import dev.tuchanski.api.exception.user.UserAlreadyRegisteredException;
-import dev.tuchanski.api.exception.user.UserIsNotAllowedException;
 import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
-import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

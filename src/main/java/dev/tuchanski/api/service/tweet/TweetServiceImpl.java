@@ -4,17 +4,15 @@ import dev.tuchanski.api.dto.tweet.TweetRequestDTO;
 import dev.tuchanski.api.dto.tweet.TweetResponseDTO;
 import dev.tuchanski.api.entity.Tweet;
 import dev.tuchanski.api.entity.User;
-import dev.tuchanski.api.exception.auth.InvalidTokenException;
 import dev.tuchanski.api.exception.tweet.ContentIsTheSameException;
 import dev.tuchanski.api.exception.tweet.TweetNotBelongToUserException;
 import dev.tuchanski.api.exception.tweet.TweetNotFoundException;
 import dev.tuchanski.api.exception.user.UserNotFoundException;
 import dev.tuchanski.api.mapper.TweetMapper;
-import dev.tuchanski.api.mapper.UserMapper;
 import dev.tuchanski.api.repository.TweetRepository;
 import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,14 +22,13 @@ import java.util.UUID;
 import static dev.tuchanski.api.service.user.UserServiceImpl.getUser;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TweetServiceImpl implements TweetService {
 
     private final TweetRepository tweetRepository;
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final TweetMapper tweetMapper;
-
 
     @Override
     public TweetResponseDTO create(String token, TweetRequestDTO tweetRequestDTO) {

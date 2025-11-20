@@ -1,15 +1,14 @@
 package dev.tuchanski.api.service.auth;
 
-import dev.tuchanski.api.entity.User;
 import dev.tuchanski.api.repository.UserRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthorizationService implements UserDetailsService {
 
     private final UserRepository userRepository;

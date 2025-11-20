@@ -11,7 +11,7 @@ import dev.tuchanski.api.mapper.FollowMapper;
 import dev.tuchanski.api.repository.FollowRepository;
 import dev.tuchanski.api.repository.UserRepository;
 import dev.tuchanski.api.service.auth.TokenService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static dev.tuchanski.api.service.user.UserServiceImpl.getUser;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
 
     private final FollowRepository followRepository;

@@ -4,7 +4,7 @@ import dev.tuchanski.api.dto.tweet.TweetRequestDTO;
 import dev.tuchanski.api.dto.tweet.TweetResponseDTO;
 import dev.tuchanski.api.service.tweet.TweetService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tweets")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TweetController {
 
     private final TweetService tweetService;

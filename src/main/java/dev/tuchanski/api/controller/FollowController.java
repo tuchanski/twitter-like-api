@@ -2,17 +2,16 @@ package dev.tuchanski.api.controller;
 
 import dev.tuchanski.api.dto.follow.FollowResponseDTO;
 import dev.tuchanski.api.service.follow.FollowService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FollowController {
 
     private final FollowService followService;
