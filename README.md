@@ -1,121 +1,207 @@
-# Twitter-like API 𝕏
+# Twitter-like API (𝕏 Inspired)
 
-A learning-oriented REST API inspired by Twitter/X. It focuses on core social features (users and tweets) built with modern Spring Boot, JWT-based authentication, and MySQL persistence.
+An educational, production-style REST API inspired by Twitter/X. It implements core social features (users, tweets, likes, comments, follows) using modern Spring Boot, stateless JWT authentication, and MySQL persistence.
 
-## Features
+## Table of Contents
 
-- User registration and login with JWT authentication
-- Role-based access control with method-level security (ADMIN and USER)
-- Users: create (admin), read, update, delete with ownership/admin rules
-- Tweets: create, list (public), get by id (public), update/delete by owner
-- Data validation on all input DTOs
-- MySQL persistence via Spring Data JPA (DDL auto-update for local dev)
+1. Overview
+2. Features
+3. Tech Stack
+4. Architecture
+5. Configuration
+6. Running the Project
+7. Authentication & Security
+8. API Endpoints
+9. Example Usage
+10. OpenAPI / Swagger Docs
+11. Data Model (Simplified)
+12. Testing (Planned)
+13. Roadmap
+14. Contributing
+15. License & Disclaimer
 
-Planned:
+## 1. Overview
 
-- Endpoints for likes, comments, and following/followers
-- Feed/timeline endpoints
-- OpenAPI/Swagger docs (springdoc)
+This project serves as a learning platform showcasing clean layering, DTO mapping, role-based + ownership security, and comprehensive OpenAPI documentation suitable for extension into a full social feed system.
 
-## Tech Stack
+## 2. Features
 
-- Java 21, Maven
+Implemented:
+
+- User registration & login (JWT bearer)
+- Granting admin role
+- User CRUD with admin/ownership rules
+- Tweets: create, list (public), filter by author, retrieve, update, delete
+- Likes: like/unlike tweets, list likes by tweet or user
+- Comments: create, list by tweet, retrieve, update, delete
+- Follow system: follow/unfollow users, list followers & following
+- Centralized exception handling with structured error response
+- Input validation on request DTOs
+- OpenAPI configuration + Swagger UI redirect (`/docs`)
+
+Security Highlights:
+
+- Stateless JWT filter
+- Method-level authorization (`@PreAuthorize`) for sensitive operations
+- Granular role + principal-based access (admin vs owner)
+
+## 3. Tech Stack
+
+- Java 21
 - Spring Boot 3.5 (Web, Validation, Security, Data JPA)
-- JWT (com.auth0:java-jwt)
-- MySQL (runtime)
-- Lombok (dev convenience)
+- Springdoc OpenAPI 3 (Swagger UI)
+- JWT (Auth0 `java-jwt`)
+- MySQL (development persistence)
+- Lombok (boilerplate reduction)
+- Maven (build + dependency management)
 
-## Architecture
+## 4. Architecture
 
-- Layered structure: controller → service → repository → entity
-- DTOs and mappers to isolate transport models from persistence models
-- Stateless security with a custom JWT filter and method-level authorization
+Layered structure emphasizing separation of concerns:
+
+- `controller` → HTTP / input boundary
+- `service` → business logic & security checks (ownership, role checks)
+- `repository` → persistence via Spring Data JPA
+- `entity` → JPA mapped domain models
+- `dto` + `mapper` → transport and transformation layers
+- `infra/security` → JWT parsing & authentication filter
+- `exception` → domain-specific and validation exception handling
 
 ```
 src/main/java/dev/tuchanski/api
-├── config/security      # Security configuration and filter chain
-├── controller           # REST controllers (auth, users, tweets)
-├── dto                  # Request/response DTOs
-├── entity               # JPA entities (User, Tweet, Like, Comment, Follow)
-├── infra/security       # JWT filter and helpers
-├── mapper               # Mapping between entities and DTOs
-├── repository           # Spring Data repositories
-└── service              # Business logic and token service
+├── config              # OpenAPI, Web, Security configuration
+├── controller          # REST controllers (auth, users, tweets, likes, comments, follows)
+├── dto                 # Request/response DTOs per feature
+├── entity              # JPA entities (User, Tweet, Like, Comment, Follow)
+├── exception           # Custom exception hierarchy & handler
+├── infra/security      # JWT filter & helper classes
+├── mapper              # Entity <-> DTO conversion logic
+├── repository          # Spring Data JPA repositories
+└── service             # Business logic & token services
 ```
 
-## Configuration
+## 5. Configuration
 
-Default local configuration is set in `src/main/resources/application.properties`:
+Default settings in `src/main/resources/application.properties`:
 
-- Server port: 8080 (default)
-- Database: `jdbc:mysql://localhost:3307/twitter` (user: `root`, password: `secret`)
-- Hibernate: `spring.jpa.hibernate.ddl-auto=update` (auto-create/alter tables for dev)
-- JWT secret: `api.security.token.secret`
+- Server port: `8080`
+- MySQL URL: `jdbc:mysql://localhost:3307/twitter`
+- MySQL credentials: `root` / `secret` (change for real use)
+- Hibernate DDL: `spring.jpa.hibernate.ddl-auto=update` (dev only)
+- JWT secret property: `api.security.token.secret`
 
-## Getting Started
+Override by editing the properties file or providing environment variables / JVM system properties at runtime.
+
+## 6. Running the Project
 
 Prerequisites:
 
-- Java 21
-- Maven 3.9+
-- MySQL running locally (adjust `application.properties` if needed)
+- Java 21 installed
+- Maven 3.9+ (or use wrapper)
+- Local MySQL instance (adjust URL/credentials if different)
 
-Run locally:
+Windows (PowerShell):
 
-```bash
-./mvnw spring-boot:run
+```
+./mvnw.cmd clean spring-boot:run
 ```
 
-The API will be available at http://localhost:8080.
+Unix/macOS:
 
-Tip: enable annotation processing for Lombok in your IDE.
+```
+./mvnw clean spring-boot:run
+```
 
-## API at a Glance
+After startup the API is available at: `http://localhost:8080`
 
-Base URL: `/api`
+Swagger UI: `http://localhost:8080/docs` (redirects to `/swagger-ui/index.html`)
 
-Authentication
+## 7. Authentication & Security
 
-- POST `/auth/register` — create a new user (public)
-- POST `/auth/login` — obtain a JWT token (public)
+- Obtain a JWT via `POST /api/auth/login`.
+- Send token on protected requests: `Authorization: Bearer <token>`.
+- Public endpoints: login/register, listing & retrieving tweets, reading comments, reading users (GET), OpenAPI docs.
+- Protected endpoints enforce roles or ownership via `@PreAuthorize` and service-layer checks.
+- Passwords stored using BCrypt.
 
-Users (secured; method-level rules)
+## 8. API Endpoints
 
-- POST `/users` — create user (ADMIN)
-- GET `/users` — list all users (ADMIN)
-- GET `/users/{id}` — get user by id (ADMIN or the same user)
-- GET `/users/username/{username}` — get by username (ADMIN or the same user)
-- PATCH `/users/{id}` — update (ADMIN or the same user)
-- DELETE `/users/{id}` — delete (ADMIN or the same user)
+Base path prefix: `/api`
 
-Tweets
+### Authentication
 
-- GET `/tweets` — list tweets (public). Optional `?username=john` filters by author
-- GET `/tweets/{id}` — get tweet by id (public)
-- POST `/tweets` — create tweet (requires Bearer token)
-- PUT `/tweets/{id}` — update tweet (requires Bearer token; owner enforced by service)
-- DELETE `/tweets/{id}` — delete tweet (requires Bearer token; owner enforced by service)
+| Method | Path             | Auth   | Description                  |
+| ------ | ---------------- | ------ | ---------------------------- |
+| POST   | `/auth/register` | Public | Register a new user          |
+| POST   | `/auth/login`    | Public | Authenticate and receive JWT |
 
-## Authentication & Authorization
+### Users
 
-- Login returns a JWT. Send it on subsequent requests using the `Authorization` header:
-  `Authorization: Bearer <token>`
-- Security is stateless; the custom filter validates the token and sets the security context
-- Method-level annotations (e.g., `@PreAuthorize`) enforce ownership/role rules
+| Method | Path                            | Auth           | Description          |
+| ------ | ------------------------------- | -------------- | -------------------- |
+| POST   | `/users`                        | Admin          | Create user          |
+| GET    | `/users`                        | Admin          | List all users       |
+| GET    | `/users/{id}`                   | Admin or Owner | Get user by UUID     |
+| GET    | `/users/username/{username}`    | Admin or Owner | Get user by username |
+| PATCH  | `/users/{id}`                   | Admin or Owner | Partial update       |
+| DELETE | `/users/{id}`                   | Admin or Owner | Delete user          |
+| PATCH  | `/users/{targetUsername}/admin` | Admin          | Grant admin role     |
 
-## Example Requests
+### Tweets
 
-Register a user:
+| Method | Path           | Auth           | Description                                    |
+| ------ | -------------- | -------------- | ---------------------------------------------- |
+| GET    | `/tweets`      | Public         | List all tweets (optional `?username=` filter) |
+| GET    | `/tweets/{id}` | Public         | Get tweet by UUID                              |
+| POST   | `/tweets`      | Bearer         | Create tweet                                   |
+| PUT    | `/tweets/{id}` | Bearer (Owner) | Update tweet content                           |
+| DELETE | `/tweets/{id}` | Bearer (Owner) | Delete tweet                                   |
+
+### Likes
+
+| Method | Path                      | Auth           | Description                |
+| ------ | ------------------------- | -------------- | -------------------------- |
+| POST   | `/tweets/{tweetId}/likes` | Bearer         | Like a tweet               |
+| GET    | `/likes/{likeId}`         | Public         | Get like by UUID           |
+| GET    | `/tweets/{tweetId}/likes` | Public         | List likes for tweet       |
+| GET    | `/users/{username}/likes` | Public         | List likes by user         |
+| DELETE | `/tweets/{tweetId}/likes` | Bearer (Owner) | Remove like (current user) |
+
+### Comments
+
+| Method | Path                         | Auth           | Description                                 |
+| ------ | ---------------------------- | -------------- | ------------------------------------------- |
+| POST   | `/tweets/{tweetId}/comments` | Bearer         | Create comment on tweet                     |
+| GET    | `/comments/{id}`             | Public         | Retrieve comment by UUID                    |
+| GET    | `/tweets/{tweetId}/comments` | Public         | List comments of tweet (desc creation time) |
+| PUT    | `/comments/{id}`             | Bearer (Owner) | Update comment                              |
+| DELETE | `/comments/{id}`             | Bearer (Owner) | Delete comment                              |
+
+### Follows
+
+| Method | Path                                     | Auth   | Description                     |
+| ------ | ---------------------------------------- | ------ | ------------------------------- |
+| POST   | `/users/{usernameFollowTarget}/follow`   | Bearer | Follow a user                   |
+| GET    | `/users/{username}/following`            | Public | List users followed by username |
+| GET    | `/users/{username}/followers`            | Public | List users following username   |
+| DELETE | `/users/{usernameUnfollowTarget}/follow` | Bearer | Unfollow a user                 |
+
+### Documentation
+
+| Method | Path              | Auth   | Description            |
+| ------ | ----------------- | ------ | ---------------------- |
+| GET    | `/docs`           | Public | Redirect to Swagger UI |
+| GET    | `/swagger-ui/**`  | Public | Swagger UI assets      |
+| GET    | `/v3/api-docs/**` | Public | Raw OpenAPI JSON       |
+
+## 9. Example Usage
+
+Register:
 
 ```bash
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "Jane Doe",
-    "username": "janed",
-    "email": "jane@example.com",
-    "password": "pass1234"
-  }'
+  -d '{"name":"Jane Doe","username":"janed","email":"jane@example.com","password":"pass1234"}'
 ```
 
 Login:
@@ -123,58 +209,73 @@ Login:
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{
-    "username": "janed",
-    "password": "pass1234"
-  }'
+  -d '{"username":"janed","password":"pass1234"}'
 ```
 
-Response (200):
-
-```json
-{
-  "token": "<jwt>",
-  "id": "<uuid>",
-  "username": "janed"
-}
-```
-
-Create a tweet:
+Create tweet:
 
 ```bash
 curl -X POST http://localhost:8080/api/tweets \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <jwt>" \
-  -d '{ "content": "Hello, world!" }'
+  -d '{"content":"Hello, world!"}'
 ```
 
-List tweets (all or by username):
+Like tweet:
 
 ```bash
-curl "http://localhost:8080/api/tweets"
-# or
-curl "http://localhost:8080/api/tweets?username=janed"
+curl -X POST http://localhost:8080/api/tweets/<tweet-uuid>/likes \
+  -H "Authorization: Bearer <jwt>"
 ```
 
-## Data Model (simplified)
+Comment on tweet:
 
-- User (id, name, username, email, password, bio, role, timestamps)
-- Tweet (id, content, author, timestamps)
-- Like (user ↔ tweet)
-- Comment (user ↔ tweet, content, timestamps)
-- Follow (follower ↔ followed, timestamp)
+```bash
+curl -X POST http://localhost:8080/api/tweets/<tweet-uuid>/comments \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <jwt>" \
+  -d '{"content":"Nice post!"}'
+```
 
-## Roadmap
+Follow user:
 
-- [ ] Public endpoints for user profiles
-- [ ] Likes, comments, and follow management endpoints
-- [ ] Feed/timeline by followed users
-- [ ] Pagination and sorting
-- [ ] OpenAPI/Swagger UI
-- [ ] Test coverage (unit and integration)
+```bash
+curl -X POST http://localhost:8080/api/users/otheruser/follow \
+  -H "Authorization: Bearer <jwt>"
+```
 
-## Notes
+## 10. OpenAPI / Swagger Docs
 
-- This project is for educational purposes.
-- Use strong secrets in production and disable DDL auto-update.
-- Consider Docker for local MySQL if you don’t have it installed.
+OpenAPI metadata is defined in `OpenApiConfig`. Access interactive docs at:
+
+```
+http://localhost:8080/docs
+```
+
+Raw spec (JSON):
+
+```
+http://localhost:8080/v3/api-docs
+```
+
+Use these endpoints for client generation or exploration.
+
+Security scheme name: `bearerAuth` (standard HTTP Bearer JWT).
+
+## 11. Data Model (Simplified)
+
+- User: id (UUID), name, username, email, password (BCrypt), bio, roles, timestamps
+- Tweet: id (UUID), content, author (User), timestamps
+- Like: id (UUID), user, tweet, timestamps
+- Comment: id (UUID), user, tweet, content, timestamps
+- Follow: id (UUID), follower (User), followed (User), timestamp
+
+
+## 12. Contributing
+
+Contributions welcome! Feel free to open issues or PRs for improvements, refactors, or new features. Please keep code style consistent and ensure new endpoints are documented with OpenAPI annotations.
+
+## 15. License & Disclaimer
+
+Licensed under the MIT License. This codebase is for educational purposes; do not deploy as-is to production without hardening (secrets management, proper CORS, rate limiting, logging, monitoring, and stricter security settings).
+
