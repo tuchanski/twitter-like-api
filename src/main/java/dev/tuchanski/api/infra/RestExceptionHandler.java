@@ -3,6 +3,9 @@ package dev.tuchanski.api.infra;
 import dev.tuchanski.api.exception.auth.InvalidTokenException;
 import dev.tuchanski.api.exception.comment.CommentNotBelongToUserException;
 import dev.tuchanski.api.exception.comment.CommentNotFoundException;
+import dev.tuchanski.api.exception.follow.RelationshipAlreadyExistsException;
+import dev.tuchanski.api.exception.follow.RelationshipIsNotValidException;
+import dev.tuchanski.api.exception.follow.RelationshipNotFoundException;
 import dev.tuchanski.api.exception.like.LikeAlreadyRegisteredException;
 import dev.tuchanski.api.exception.like.LikeNotFoundException;
 import dev.tuchanski.api.exception.tweet.ContentIsTheSameException;
@@ -92,6 +95,26 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(LikeNotFoundException.class)
     private ResponseEntity<RestErrorMessage> likeNotFoundExceptionHandler(LikeNotFoundException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    // FOLLOW
+
+    @ExceptionHandler(RelationshipAlreadyExistsException.class)
+    private ResponseEntity<RestErrorMessage> relationshipAlreadyExistsExceptionHandler(RelationshipAlreadyExistsException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    @ExceptionHandler(RelationshipIsNotValidException.class)
+    private ResponseEntity<RestErrorMessage> relationshipIsNotValidExceptionHandler(RelationshipIsNotValidException e) {
+        RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
+    }
+
+    @ExceptionHandler(RelationshipNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> relationshipNotFoundExceptionHandler(RelationshipNotFoundException e) {
         RestErrorMessage treatedResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(treatedResponse);
     }
