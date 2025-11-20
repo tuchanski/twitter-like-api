@@ -38,7 +38,7 @@ public class UserMapper {
                 user.getUsername(),
                 user.getEmail(),
                 user.getBio(),
-                user.getCreatedAt()
+                user.getRole()
         );
 
         return dto;
