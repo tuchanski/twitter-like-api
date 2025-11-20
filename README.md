@@ -257,7 +257,7 @@ Security scheme name: `bearerAuth` (standard HTTP Bearer JWT).
 
 Contributions welcome! Feel free to open issues or PRs for improvements, refactors, or new features. Please keep code style consistent and ensure new endpoints are documented with OpenAPI annotations.
 
-## 15. License & Disclaimer
+## 13. License & Disclaimer
 
 Licensed under the MIT License. This codebase is for educational purposes; do not deploy as-is to production without hardening (secrets management, proper CORS, rate limiting, logging, monitoring, and stricter security settings).
 
