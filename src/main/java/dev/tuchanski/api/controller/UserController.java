@@ -113,7 +113,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/{targetUsername}/admin")
+    @PatchMapping("/{id}/admin")
     @Operation(summary = "Grant admin role", description = "Adds ADMIN role to the target user.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -122,7 +122,7 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ResponseEntity<UserResponseDTO> addAdmin(@PathVariable String targetUsername) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.addAdmin(targetUsername));
+    public ResponseEntity<UserResponseDTO> addAdmin(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.addAdmin(id));
     }
 }
