@@ -119,15 +119,15 @@ Base path prefix: `/api`
 
 ### Users
 
-| Method | Path                            | Auth           | Description          |
-| ------ | ------------------------------- | -------------- | -------------------- |
-| POST   | `/users`                        | Admin          | Create user          |
-| GET    | `/users`                        | Admin          | List all users       |
-| GET    | `/users/{id}`                   | Admin or Owner | Get user by UUID     |
-| GET    | `/users/username/{username}`    | Admin or Owner | Get user by username |
-| PATCH  | `/users/{id}`                   | Admin or Owner | Partial update       |
-| DELETE | `/users/{id}`                   | Admin or Owner | Delete user          |
-| PATCH  | `/users/{targetUsername}/admin` | Admin          | Grant admin role     |
+| Method | Path                         | Auth           | Description          |
+| ------ |------------------------------| -------------- | -------------------- |
+| POST   | `/users`                     | Admin          | Create user          |
+| GET    | `/users`                     | Admin          | List all users       |
+| GET    | `/users/{id}`                | Admin or Owner | Get user by UUID     |
+| GET    | `/users/username/{username}` | Admin or Owner | Get user by username |
+| PATCH  | `/users/{id}`                | Admin or Owner | Partial update       |
+| DELETE | `/users/{id}`                | Admin or Owner | Delete user          |
+| PATCH  | `/users/{id}/admin`          | Admin          | Grant admin role     |
 
 ### Tweets
 
