@@ -120,12 +120,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDTO addAdmin(String usernameTarget) {
-        User targetUser = (User) userRepository.findByUsername(usernameTarget);
-
-        if (targetUser == null) {
-            throw new UserNotFoundException("User with username " + usernameTarget + " not found");
-        }
+    public UserResponseDTO addAdmin(UUID id) {
+        User targetUser = (User) userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User with id " + id + " not found")
+        );
 
         targetUser.setRole(UserRole.ADMIN);
         targetUser = userRepository.save(targetUser);
