@@ -44,6 +44,43 @@ class UserRepositoryTest {
         assertThat(result).isNull();
     }
 
+    @Test
+    @DisplayName("Should return TRUE if user is successfully found in DB")
+    void existsByUsernameSuccess() {
+        UserRequestDTO dto = new UserRequestDTO(
+                "Guilherme Rocha", "rocha", "rocha@gmail.com", "rocha"
+        );
+        createUser(dto);
+
+        boolean exists = userRepository.existsByUsername("rocha");
+
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should return FALSE if user is not found in DB")
+    void existsByUsernameFailure() {
+        boolean exists = userRepository.existsByUsername("jojo");
+        assertThat(exists).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should return TRUE if email is found in DB")
+    void existsByEmailSuccess() {
+        UserRequestDTO dto = new UserRequestDTO(
+                "Guilherme Rocha", "rocha", "rocha@gmail.com", "rocha"
+        );
+        createUser(dto);
+
+        assertThat(userRepository.existsByEmail(dto.email())).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should return FALSE if email is not found in DB")
+    void existsByEmailFailure() {
+        assertThat(userRepository.existsByEmail("jojo@email.com")).isFalse();
+    }
+
     private void createUser(UserRequestDTO data) {
         User user = new User();
         user.setName(data.name());
